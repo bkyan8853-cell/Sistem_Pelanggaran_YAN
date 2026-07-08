@@ -2,13 +2,39 @@ import { Siswa, Pelanggaran, Pencatatan, Pembinaan, AppSettings, DashboardStats,
 
 const API_BASE = "/api";
 
+// Safe localStorage wrappers to prevent crashing in sandboxed environments or iframe restrictions
+export function safeGetItem(key: string): string | null {
+  try {
+    return localStorage.getItem(key);
+  } catch (e) {
+    console.warn("localStorage.getItem access denied:", e);
+    return null;
+  }
+}
+
+export function safeSetItem(key: string, value: string): void {
+  try {
+    localStorage.setItem(key, value);
+  } catch (e) {
+    console.warn("localStorage.setItem access denied:", e);
+  }
+}
+
+export function safeRemoveItem(key: string): void {
+  try {
+    localStorage.removeItem(key);
+  } catch (e) {
+    console.warn("localStorage.removeItem access denied:", e);
+  }
+}
+
 // Helper untuk mengambil token dari localStorage
 export function getAuthToken(): string | null {
-  return localStorage.getItem("token");
+  return safeGetItem("token");
 }
 
 export function getCurrentUser(): User | null {
-  const userStr = localStorage.getItem("user");
+  const userStr = safeGetItem("user");
   if (!userStr) return null;
   try {
     return JSON.parse(userStr);
@@ -120,8 +146,8 @@ async function fetchWithAuth<T>(url: string, options: RequestInit = {}): Promise
   if (!response.ok) {
     if (response.status === 401) {
       // Sesi habis, bersihkan storage dan paksa login kembali
-      localStorage.removeItem("token");
-      localStorage.removeItem("user");
+      safeRemoveItem("token");
+      safeRemoveItem("user");
       window.dispatchEvent(new Event("auth-change"));
     }
     const text = await response.text().catch(() => "");
@@ -168,16 +194,16 @@ export const googleSheetApi = {
     
     const data = await res.json();
     if (data.success && data.token) {
-      localStorage.setItem("token", data.token);
-      localStorage.setItem("user", JSON.stringify(data.user));
+      safeSetItem("token", data.token);
+      safeSetItem("user", JSON.stringify(data.user));
       window.dispatchEvent(new Event("auth-change"));
     }
     return data;
   },
 
   logout(): void {
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
+    safeRemoveItem("token");
+    safeRemoveItem("user");
     window.dispatchEvent(new Event("auth-change"));
   },
 

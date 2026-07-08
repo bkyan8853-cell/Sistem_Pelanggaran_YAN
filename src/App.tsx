@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { getCurrentUser, googleSheetApi } from "./services/googleSheetApi";
+import { getCurrentUser, googleSheetApi, safeSetItem } from "./services/googleSheetApi";
 import { User } from "./types";
 import { 
   BookOpen, Users, AlertTriangle, Tag, History, FileSpreadsheet, 
@@ -71,7 +71,7 @@ export default function App() {
         changed = true;
       }
       if (changed) {
-        localStorage.setItem("user", JSON.stringify(currentUser));
+        safeSetItem("user", JSON.stringify(currentUser));
       }
     }
     setUser(currentUser);
@@ -90,7 +90,7 @@ export default function App() {
           changed = true;
         }
         if (changed) {
-          localStorage.setItem("user", JSON.stringify(u));
+          safeSetItem("user", JSON.stringify(u));
         }
       }
       setUser(u);
