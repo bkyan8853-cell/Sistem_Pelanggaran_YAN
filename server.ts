@@ -38,15 +38,22 @@ app.use((req, res, next) => {
 // Middleware to normalize and log requests (especially on Vercel)
 app.use((req, res, next) => {
   const originalUrl = req.url || "";
+  
+  // If the request URL is already a valid API route, leave it completely untouched!
+  if (originalUrl.startsWith("/api/") || originalUrl === "/api") {
+    console.log(`[Request] API Route (Unmodified) | Method: ${req.method} | URL: ${req.url}`);
+    return next();
+  }
+
   const xMatchedPath = (req.headers["x-matched-path"] as string) || "";
   const xOriginalUrl = (req.headers["x-original-url"] as string) || "";
   const xForwardedUri = (req.headers["x-forwarded-uri"] as string) || "";
 
-  // On Vercel, we must extract the original request path from headers
+  // On Vercel, we must extract the original request path from headers if originalUrl is not already /api
   if (process.env.VERCEL) {
-    if (xOriginalUrl && xOriginalUrl.startsWith("/api")) {
+    if (xOriginalUrl && (xOriginalUrl.startsWith("/api/") || xOriginalUrl === "/api")) {
       req.url = xOriginalUrl;
-    } else if (xForwardedUri && xForwardedUri.startsWith("/api")) {
+    } else if (xForwardedUri && (xForwardedUri.startsWith("/api/") || xForwardedUri === "/api")) {
       req.url = xForwardedUri;
     } else if (xMatchedPath && xMatchedPath.startsWith("/api") && !xMatchedPath.includes("index")) {
       req.url = xMatchedPath;
