@@ -15,14 +15,31 @@ app.use((req, res, next) => {
     return next();
   }
 
+  // On Vercel, we must NEVER call express.json() or express.urlencoded()
+  // if the body is undefined, as they will hang the request stream if the Vercel bridge has already consumed it.
+  if (process.env.VERCEL) {
+    if (req.body !== undefined && req.body !== null) {
+      if (typeof req.body === "string") {
+        try {
+          req.body = JSON.parse(req.body);
+        } catch (_) {}
+      } else if (Buffer.isBuffer(req.body)) {
+        try {
+          req.body = JSON.parse(req.body.toString("utf-8"));
+        } catch (_) {}
+      }
+    } else {
+      // Set to empty object to prevent downstream errors, and immediately proceed without blocking
+      req.body = {};
+    }
+    return next();
+  }
+
+  // Local environment standard Express parser with stream-safety
   if (req.body !== undefined && req.body !== null) {
     if (typeof req.body === "string") {
       try {
         req.body = JSON.parse(req.body);
-      } catch (_) {}
-    } else if (Buffer.isBuffer(req.body)) {
-      try {
-        req.body = JSON.parse(req.body.toString("utf-8"));
       } catch (_) {}
     }
     return next();
@@ -41,7 +58,6 @@ app.use((req, res, next) => {
   });
 });
 
-
 // Middleware to normalize and log requests (especially on Vercel)
 app.use((req, res, next) => {
   const originalUrl = req.url || "";
@@ -50,8 +66,11 @@ app.use((req, res, next) => {
   const xOriginalUrl = (req.headers["x-original-url"] as string) || "";
   const xForwardedUri = (req.headers["x-forwarded-uri"] as string) || "";
 
-  // On Vercel, we must extract and restore the original client request path from headers
-  if (process.env.VERCEL) {
+  // Check if req.url is already a valid direct API route (and not index.ts/js)
+  const isDirectApi = req.url.startsWith("/api/") && !req.url.includes("index.ts") && !req.url.includes("index.js") && req.url !== "/api";
+
+  // On Vercel, we must extract and restore the original client request path from headers ONLY if it is not already a direct API path
+  if (process.env.VERCEL && !isDirectApi) {
     if (xOriginalUrl && xOriginalUrl.startsWith("/api")) {
       req.url = xOriginalUrl;
     } else if (xForwardedUri && xForwardedUri.startsWith("/api")) {
