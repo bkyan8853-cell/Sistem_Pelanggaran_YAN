@@ -131,7 +131,7 @@ export default function App() {
     { id: "settings", label: "Integrasi Sheets", icon: Server, roles: ["Admin"] }
   ];
 
-  const allowedNavItems = navItems.filter(item => item.roles.includes(user.role));
+  const allowedNavItems = navItems.filter(item => item.roles.includes(user?.role || ""));
 
   return (
     <div id="app-root" className="min-h-screen bg-slate-50 flex flex-col md:flex-row font-sans text-slate-800">
@@ -164,16 +164,16 @@ export default function App() {
           {/* User Logged Info */}
           <div className="px-6 py-4 bg-slate-950/40 border-b border-slate-800/50 flex items-center gap-3">
             <div className="h-9 w-9 rounded-full bg-slate-800 flex items-center justify-center text-blue-400 font-bold border border-slate-700 text-xs">
-              {user.nama.charAt(0)}
+              {user?.nama?.charAt(0) || user?.username?.charAt(0)?.toUpperCase() || "U"}
             </div>
             <div className="overflow-hidden">
-              <div className="text-xs font-extrabold text-white truncate">{user.nama}</div>
+              <div className="text-xs font-extrabold text-white truncate">{user?.nama || user?.username || "Pengguna"}</div>
               <div className="flex items-center gap-1 mt-0.5">
                 <span className={`inline-block w-1.5 h-1.5 rounded-full ${
-                  user.role === "Admin" ? "bg-red-500" : user.role === "Koordinator BK" ? "bg-emerald-500" : "bg-amber-500"
+                  user?.role === "Admin" ? "bg-red-500" : user?.role === "Koordinator BK" ? "bg-emerald-500" : "bg-amber-500"
                 }`} />
                 <span className="text-[9px] text-slate-400 font-bold uppercase tracking-wider">
-                  {user.role === "Wali Kelas" ? "JENDELA WALI KELAS" : user.role}
+                  {user?.role === "Wali Kelas" ? "JENDELA WALI KELAS" : (user?.role || "Akses")}
                 </span>
               </div>
             </div>
@@ -296,7 +296,7 @@ export default function App() {
           <div className="flex items-center gap-2">
             <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-blue-50 text-blue-800 border border-blue-100/50">
               <span className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse" />
-              {user.role === "Wali Kelas" ? "JENDELA WALI KELAS" : `${user.role} Panel`}
+              {user?.role === "Wali Kelas" ? "JENDELA WALI KELAS" : `${user?.role || "Akses"} Panel`}
             </span>
           </div>
           
