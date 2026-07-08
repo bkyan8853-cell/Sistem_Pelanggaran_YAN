@@ -11,6 +11,10 @@ const DATA_FILE = process.env.VERCEL
 
 // Smart adaptive body parser middleware for Vercel and Local compatibility
 app.use((req, res, next) => {
+  if (req.method === "GET" || req.method === "HEAD") {
+    return next();
+  }
+
   if (req.body !== undefined && req.body !== null) {
     if (typeof req.body === "string") {
       try {
@@ -34,44 +38,35 @@ app.use((req, res, next) => {
 // Middleware to normalize and log requests (especially on Vercel)
 app.use((req, res, next) => {
   const originalUrl = req.url || "";
-  
-  // If the request URL already starts with /api, leave it as is and proceed
-  if (req.url && (req.url.startsWith("/api") || req.url.startsWith("/api/"))) {
-    console.log(`[Request] Method: ${req.method} | URL: ${req.url} (unmodified)`);
-    return next();
-  }
-
   const xMatchedPath = (req.headers["x-matched-path"] as string) || "";
   const xOriginalUrl = (req.headers["x-original-url"] as string) || "";
   const xForwardedUri = (req.headers["x-forwarded-uri"] as string) || "";
-  
-  // On local development, don't prepend /api to static files/Vite routes!
-  const isApiRequest = req.url.startsWith("/api") || req.url.includes("/api/") || xMatchedPath.startsWith("/api") || xOriginalUrl.startsWith("/api") || xForwardedUri.startsWith("/api");
 
-  if (process.env.VERCEL || isApiRequest) {
-    // Restore the original client request path if we are on Vercel
-    if (xMatchedPath && xMatchedPath.startsWith("/api") && !xMatchedPath.includes("index")) {
-      req.url = xMatchedPath;
-    } else if (xOriginalUrl && xOriginalUrl.startsWith("/api")) {
+  // On Vercel, we must extract the original request path from headers
+  if (process.env.VERCEL) {
+    if (xOriginalUrl && xOriginalUrl.startsWith("/api")) {
       req.url = xOriginalUrl;
     } else if (xForwardedUri && xForwardedUri.startsWith("/api")) {
       req.url = xForwardedUri;
-    }
-    
-    // If the url is pointing to the handler file itself, clean it up
-    if (req.url.includes("/api/index.ts") || req.url.includes("/api/index.js")) {
-      req.url = req.url.replace(/\/api\/index\.(ts|js)/i, "");
-    }
-    
-    // Ensure the url starts with /api
-    if (!req.url.startsWith("/api")) {
-      req.url = "/api" + (req.url.startsWith("/") ? req.url : "/" + req.url);
+    } else if (xMatchedPath && xMatchedPath.startsWith("/api") && !xMatchedPath.includes("index")) {
+      req.url = xMatchedPath;
     }
   }
-  
-  // Clean double slashes
+
+  // If the url points to the index file itself, strip it
+  if (req.url.includes("/api/index.ts") || req.url.includes("/api/index.js")) {
+    req.url = req.url.replace(/\/api\/index\.(ts|js)/i, "");
+  }
+
+  // Ensure url has no duplicate slashes and correctly starts with /api if it's an API route
   req.url = req.url.replace(/\/+/g, "/");
+  const isApiRoute = req.url.startsWith("/api") || req.url.includes("/api/") || xOriginalUrl.startsWith("/api") || xMatchedPath.startsWith("/api") || xForwardedUri.startsWith("/api");
   
+  if (isApiRoute && !req.url.startsWith("/api")) {
+    req.url = "/api" + (req.url.startsWith("/") ? req.url : "/" + req.url);
+    req.url = req.url.replace(/\/+/g, "/");
+  }
+
   console.log(`[Request] Method: ${req.method} | URL: ${req.url} | originalUrl: ${originalUrl} | x-original: ${xOriginalUrl} | x-matched: ${xMatchedPath}`);
   
   next();
