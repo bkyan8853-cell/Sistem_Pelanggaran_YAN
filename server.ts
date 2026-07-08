@@ -29,8 +29,15 @@ app.use((req, res, next) => {
   }
   
   express.json()(req, res, (err) => {
-    if (err) return next(err);
-    express.urlencoded({ extended: true })(req, res, next);
+    if (err) {
+      console.warn("Express JSON parse warning:", err.message);
+    }
+    express.urlencoded({ extended: true })(req, res, (errUrl) => {
+      if (errUrl) {
+        console.warn("Express URLencoded parse warning:", errUrl.message);
+      }
+      next();
+    });
   });
 });
 
@@ -39,21 +46,15 @@ app.use((req, res, next) => {
 app.use((req, res, next) => {
   const originalUrl = req.url || "";
   
-  // If the request URL is already a valid API route, leave it completely untouched!
-  if (originalUrl.startsWith("/api/") || originalUrl === "/api") {
-    console.log(`[Request] API Route (Unmodified) | Method: ${req.method} | URL: ${req.url}`);
-    return next();
-  }
-
   const xMatchedPath = (req.headers["x-matched-path"] as string) || "";
   const xOriginalUrl = (req.headers["x-original-url"] as string) || "";
   const xForwardedUri = (req.headers["x-forwarded-uri"] as string) || "";
 
-  // On Vercel, we must extract the original request path from headers if originalUrl is not already /api
+  // On Vercel, we must extract and restore the original client request path from headers
   if (process.env.VERCEL) {
-    if (xOriginalUrl && (xOriginalUrl.startsWith("/api/") || xOriginalUrl === "/api")) {
+    if (xOriginalUrl && xOriginalUrl.startsWith("/api")) {
       req.url = xOriginalUrl;
-    } else if (xForwardedUri && (xForwardedUri.startsWith("/api/") || xForwardedUri === "/api")) {
+    } else if (xForwardedUri && xForwardedUri.startsWith("/api")) {
       req.url = xForwardedUri;
     } else if (xMatchedPath && xMatchedPath.startsWith("/api") && !xMatchedPath.includes("index")) {
       req.url = xMatchedPath;
@@ -71,8 +72,9 @@ app.use((req, res, next) => {
   
   if (isApiRoute && !req.url.startsWith("/api")) {
     req.url = "/api" + (req.url.startsWith("/") ? req.url : "/" + req.url);
-    req.url = req.url.replace(/\/+/g, "/");
   }
+  
+  req.url = req.url.replace(/\/+/g, "/");
 
   console.log(`[Request] Method: ${req.method} | URL: ${req.url} | originalUrl: ${originalUrl} | x-original: ${xOriginalUrl} | x-matched: ${xMatchedPath}`);
   
