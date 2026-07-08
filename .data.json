@@ -1,0 +1,392 @@
+{
+  "siswa": [
+    {
+      "id": "auto-6e457f99",
+      "nis": "11111",
+      "nama": "mas bahlil ganteng",
+      "kelas": "XII-1",
+      "jk": "L",
+      "namaOrangTua": "Pabroro",
+      "noHp": "089876354647"
+    },
+    {
+      "id": "s-1783242285770",
+      "nis": "25004",
+      "nama": "Adam Alis",
+      "kelas": "X-IPA-7",
+      "jk": "L",
+      "namaOrangTua": "Aliando",
+      "noHp": "08978674744"
+    },
+    {
+      "id": "s-1783242285771",
+      "nis": "25005",
+      "nama": "Mamah Dedah ",
+      "kelas": "VII-1",
+      "jk": "P",
+      "namaOrangTua": "Imamudin",
+      "noHp": "087876565439"
+    },
+    {
+      "id": "s-1783259043387",
+      "nis": "25007",
+      "nama": "Luhut Panjaitan",
+      "kelas": "VIII-1",
+      "jk": "L",
+      "namaOrangTua": "Buahlilll",
+      "noHp": "898765432"
+    },
+    {
+      "id": "s-1783396708105",
+      "nis": "22222",
+      "nama": "Tommy",
+      "kelas": "VIII-1",
+      "jk": "L",
+      "namaOrangTua": "Soeharto",
+      "noHp": "89878655"
+    }
+  ],
+  "pelanggaran": [
+    {
+      "id": "auto-4ceb8db7",
+      "kode": "P01",
+      "namaPelanggaran": "Terlambat Masuk Sekolah (< 15 menit)",
+      "kategori": "Ringan",
+      "poin": 5
+    },
+    {
+      "id": "auto-c9b68553",
+      "kode": "P02",
+      "namaPelanggaran": "Rambut Gondrong / Tidak Rapi (Siswa Laki-laki)",
+      "kategori": "Ringan",
+      "poin": 10
+    },
+    {
+      "id": "auto-2dfaa1bb",
+      "kode": "P03",
+      "namaPelanggaran": "Atribut Seragam Tidak Lengkap",
+      "kategori": "Ringan",
+      "poin": 5
+    },
+    {
+      "id": "auto-1b1b5d78",
+      "kode": "P04",
+      "namaPelanggaran": "Membolos Sekolah / Meninggalkan Kelas Tanpa Izin",
+      "kategori": "Sedang",
+      "poin": 15
+    },
+    {
+      "id": "auto-fee224c2",
+      "kode": "P05",
+      "namaPelanggaran": "Merokok di Lingkungan Sekolah",
+      "kategori": "Berat",
+      "poin": 25
+    },
+    {
+      "id": "auto-77df02b9",
+      "kode": "P06",
+      "namaPelanggaran": "Melakukan Bullying (Perundungan) Fisik/Verbal",
+      "kategori": "Berat",
+      "poin": 50
+    },
+    {
+      "id": "p-1783242398948",
+      "kode": "P07",
+      "namaPelanggaran": "Merusak fasilitas sekolah",
+      "kategori": "Berat",
+      "poin": 50
+    }
+  ],
+  "pencatatan": [
+    {
+      "id": "78a9bd40-6ed5-4abe-b600-39464f1a864c",
+      "tanggal": "2026-07-05T07:00:00.000Z",
+      "nis": "1234567",
+      "namaSiswa": "mas bahlil ganteng",
+      "kelas": "XII-1",
+      "pelanggaran": "Merusak fasilitas sekolah",
+      "poin": 50,
+      "petugas": "Iien Puspitasari, S.Pd",
+      "keterangan": "Siswa tersebut merusak pintu kelas dengan cara menendangnya hingga terpental pintunya ke ruang kepala sekolah"
+    }
+  ],
+  "pembinaan": [
+    {
+      "id": "482c426d-7bde-4bd6-b066-7cd549c5f95f",
+      "nis": "1234567",
+      "nama siswa": "mas bahlil ganteng",
+      "totalPoin": 50,
+      "tindakan": "Teguran Tertulis",
+      "tanggal": "2026-07-05T07:00:00.000Z",
+      "namaSiswa": ""
+    }
+  ],
+  "remisi": [],
+  "absensi": [
+    {
+      "id": "ab1",
+      "tanggal": "2026-05-18",
+      "nis": "24001",
+      "namaSiswa": "Ahmad Rifai",
+      "kelas": "XI-IPA-1",
+      "status": "Hadir",
+      "keterangan": ""
+    },
+    {
+      "id": "ab2",
+      "tanggal": "2026-05-18",
+      "nis": "24002",
+      "namaSiswa": "Siti Aminah",
+      "kelas": "XI-IPA-1",
+      "status": "Hadir",
+      "keterangan": ""
+    },
+    {
+      "id": "ab3",
+      "tanggal": "2026-05-18",
+      "nis": "24003",
+      "namaSiswa": "Budi Santoso",
+      "kelas": "XI-IPA-2",
+      "status": "Izin",
+      "keterangan": "Acara keluarga"
+    },
+    {
+      "id": "ab4",
+      "tanggal": "2026-05-18",
+      "nis": "24004",
+      "namaSiswa": "Dewi Lestari",
+      "kelas": "XI-IPA-2",
+      "status": "Hadir",
+      "keterangan": ""
+    },
+    {
+      "id": "ab5",
+      "tanggal": "2026-05-18",
+      "nis": "24005",
+      "namaSiswa": "Rian Hidayat",
+      "kelas": "XI-IPS-1",
+      "status": "Alfa",
+      "keterangan": "Tanpa keterangan"
+    },
+    {
+      "id": "ab6",
+      "tanggal": "2026-06-15",
+      "nis": "24001",
+      "namaSiswa": "Ahmad Rifai",
+      "kelas": "XI-IPA-1",
+      "status": "Hadir",
+      "keterangan": ""
+    },
+    {
+      "id": "ab7",
+      "tanggal": "2026-06-15",
+      "nis": "24002",
+      "namaSiswa": "Siti Aminah",
+      "kelas": "XI-IPA-1",
+      "status": "Sakit",
+      "keterangan": "Demam"
+    },
+    {
+      "id": "ab8",
+      "tanggal": "2026-06-15",
+      "nis": "24003",
+      "namaSiswa": "Budi Santoso",
+      "kelas": "XI-IPA-2",
+      "status": "Hadir",
+      "keterangan": ""
+    },
+    {
+      "id": "ab9",
+      "tanggal": "2026-06-15",
+      "nis": "24004",
+      "namaSiswa": "Dewi Lestari",
+      "kelas": "XI-IPA-2",
+      "status": "Hadir",
+      "keterangan": ""
+    },
+    {
+      "id": "ab10",
+      "tanggal": "2026-06-15",
+      "nis": "24005",
+      "namaSiswa": "Rian Hidayat",
+      "kelas": "XI-IPS-1",
+      "status": "Hadir",
+      "keterangan": ""
+    },
+    {
+      "id": "ab11",
+      "tanggal": "2026-06-16",
+      "nis": "24001",
+      "namaSiswa": "Ahmad Rifai",
+      "kelas": "XI-IPA-1",
+      "status": "Hadir",
+      "keterangan": ""
+    },
+    {
+      "id": "ab12",
+      "tanggal": "2026-06-16",
+      "nis": "24002",
+      "namaSiswa": "Siti Aminah",
+      "kelas": "XI-IPA-1",
+      "status": "Hadir",
+      "keterangan": ""
+    },
+    {
+      "id": "ab13",
+      "tanggal": "2026-06-16",
+      "nis": "24003",
+      "namaSiswa": "Budi Santoso",
+      "kelas": "XI-IPA-2",
+      "status": "Hadir",
+      "keterangan": ""
+    },
+    {
+      "id": "ab14",
+      "tanggal": "2026-06-16",
+      "nis": "24004",
+      "namaSiswa": "Dewi Lestari",
+      "kelas": "XI-IPA-2",
+      "status": "Hadir",
+      "keterangan": ""
+    },
+    {
+      "id": "ab15",
+      "tanggal": "2026-06-16",
+      "nis": "24005",
+      "namaSiswa": "Rian Hidayat",
+      "kelas": "XI-IPS-1",
+      "status": "Izin",
+      "keterangan": "Ke luar kota"
+    },
+    {
+      "id": "ab16",
+      "tanggal": "2026-07-01",
+      "nis": "24001",
+      "namaSiswa": "Ahmad Rifai",
+      "kelas": "XI-IPA-1",
+      "status": "Hadir",
+      "keterangan": ""
+    },
+    {
+      "id": "ab17",
+      "tanggal": "2026-07-01",
+      "nis": "24002",
+      "namaSiswa": "Siti Aminah",
+      "kelas": "XI-IPA-1",
+      "status": "Hadir",
+      "keterangan": ""
+    },
+    {
+      "id": "ab18",
+      "tanggal": "2026-07-01",
+      "nis": "24003",
+      "namaSiswa": "Budi Santoso",
+      "kelas": "XI-IPA-2",
+      "status": "Alfa",
+      "keterangan": "Bolos sekolah"
+    },
+    {
+      "id": "ab19",
+      "tanggal": "2026-07-01",
+      "nis": "24004",
+      "namaSiswa": "Dewi Lestari",
+      "kelas": "XI-IPA-2",
+      "status": "Hadir",
+      "keterangan": ""
+    },
+    {
+      "id": "ab20",
+      "tanggal": "2026-07-01",
+      "nis": "24005",
+      "namaSiswa": "Rian Hidayat",
+      "kelas": "XI-IPS-1",
+      "status": "Hadir",
+      "keterangan": ""
+    },
+    {
+      "id": "ab21",
+      "tanggal": "2026-07-02",
+      "nis": "24001",
+      "namaSiswa": "Ahmad Rifai",
+      "kelas": "XI-IPA-1",
+      "status": "Hadir",
+      "keterangan": ""
+    },
+    {
+      "id": "ab22",
+      "tanggal": "2026-07-02",
+      "nis": "24002",
+      "namaSiswa": "Siti Aminah",
+      "kelas": "XI-IPA-1",
+      "status": "Hadir",
+      "keterangan": ""
+    },
+    {
+      "id": "ab23",
+      "tanggal": "2026-07-02",
+      "nis": "24003",
+      "namaSiswa": "Budi Santoso",
+      "kelas": "XI-IPA-2",
+      "status": "Hadir",
+      "keterangan": ""
+    },
+    {
+      "id": "ab24",
+      "tanggal": "2026-07-02",
+      "nis": "24004",
+      "namaSiswa": "Dewi Lestari",
+      "kelas": "XI-IPA-2",
+      "status": "Sakit",
+      "keterangan": "Sakit gigi"
+    },
+    {
+      "id": "ab25",
+      "tanggal": "2026-07-02",
+      "nis": "24005",
+      "namaSiswa": "Rian Hidayat",
+      "kelas": "XI-IPS-1",
+      "status": "Hadir",
+      "keterangan": ""
+    },
+    {
+      "id": "ab-1783259115175-l6o8",
+      "tanggal": "2026-07-05",
+      "nis": "1234567",
+      "namaSiswa": "mas bahlil ganteng",
+      "kelas": "XII-1",
+      "status": "Hadir",
+      "keterangan": ""
+    },
+    {
+      "id": "ab-1783259115175-7qzw",
+      "tanggal": "2026-07-05",
+      "nis": "25004",
+      "namaSiswa": "Adam Alis",
+      "kelas": "X-IPA-7",
+      "status": "Hadir",
+      "keterangan": ""
+    },
+    {
+      "id": "ab-1783259115175-ge56",
+      "tanggal": "2026-07-05",
+      "nis": "25005",
+      "namaSiswa": "Mamah Dedah ",
+      "kelas": "VII-1",
+      "status": "Hadir",
+      "keterangan": ""
+    },
+    {
+      "id": "ab-1783259115175-ixdi",
+      "tanggal": "2026-07-05",
+      "nis": "25007",
+      "namaSiswa": "Luhut Panjaitan",
+      "kelas": "VIII-1",
+      "status": "Sakit",
+      "keterangan": "bdb "
+    }
+  ],
+  "settings": {
+    "googleSheetUrl": "https://script.google.com/macros/s/AKfycbzUoquT3LtC3ramDaTOTeEZH5LEnLniPmfN9mT-tcpP2iB2vLs9u0VCl9FuMnsC5IMy6w/exec",
+    "syncEnabled": true
+  }
+}
