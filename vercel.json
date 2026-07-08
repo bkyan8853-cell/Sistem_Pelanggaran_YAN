@@ -3,7 +3,7 @@
   "outputDirectory": "dist",
   "functions": {
     "api/index.ts": {
-      "includeFiles": [".data.json"]
+      "includeFiles": ".data.json"
     }
   },
   "rewrites": [
