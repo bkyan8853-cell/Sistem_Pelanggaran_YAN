@@ -9,69 +9,81 @@ const DATA_FILE = process.env.VERCEL
   ? path.join("/tmp", ".data.json")
   : path.join(process.cwd(), ".data.json");
 
-// Smart adaptive body parser middleware for Vercel and Local compatibility
+// ================= ADAPTIVE STREAM-SAFE BODY PARSER =================
+// Completely eliminates stream hanging on Vercel and local environments.
 app.use((req, res, next) => {
   if (req.method === "GET" || req.method === "HEAD") {
     return next();
   }
 
-  // On Vercel, we must NEVER call express.json() or express.urlencoded()
-  // if the body is undefined, as they will hang the request stream if the Vercel bridge has already consumed it.
-  if (process.env.VERCEL) {
-    if (req.body !== undefined && req.body !== null) {
-      if (typeof req.body === "string") {
-        try {
-          req.body = JSON.parse(req.body);
-        } catch (_) {}
-      } else if (Buffer.isBuffer(req.body)) {
-        try {
-          req.body = JSON.parse(req.body.toString("utf-8"));
-        } catch (_) {}
-      }
-    } else {
-      // Set to empty object to prevent downstream errors, and immediately proceed without blocking
-      req.body = {};
-    }
-    return next();
-  }
-
-  // Local environment standard Express parser with stream-safety
+  // 1. If body is already populated (Vercel automatic parsing or similar)
   if (req.body !== undefined && req.body !== null) {
     if (typeof req.body === "string") {
       try {
         req.body = JSON.parse(req.body);
       } catch (_) {}
+    } else if (Buffer.isBuffer(req.body)) {
+      try {
+        req.body = JSON.parse(req.body.toString("utf-8"));
+      } catch (_) {}
     }
     return next();
   }
+
+  // 2. If body is undefined but the request stream is readable, collect the body safely
+  const hasContent = req.headers["content-length"] && parseInt(req.headers["content-length"] as string, 10) > 0;
+  const isChunked = req.headers["transfer-encoding"];
   
-  express.json()(req, res, (err) => {
-    if (err) {
-      console.warn("Express JSON parse warning:", err.message);
-    }
-    express.urlencoded({ extended: true })(req, res, (errUrl) => {
-      if (errUrl) {
-        console.warn("Express URLencoded parse warning:", errUrl.message);
+  if ((hasContent || isChunked) && req.readable) {
+    let rawData = "";
+    req.on("data", (chunk) => {
+      rawData += chunk;
+    });
+    req.on("end", () => {
+      try {
+        req.body = rawData ? JSON.parse(rawData) : {};
+      } catch (_) {
+        try {
+          const params = new URLSearchParams(rawData);
+          const obj: any = {};
+          params.forEach((value, key) => {
+            obj[key] = value;
+          });
+          req.body = obj;
+        } catch (_) {
+          req.body = {};
+        }
       }
       next();
     });
-  });
+    req.on("error", (err) => {
+      console.error("Stream parsing error:", err);
+      req.body = {};
+      next();
+    });
+  } else {
+    req.body = {};
+    next();
+  }
 });
 
-// Middleware to normalize and log requests (especially on Vercel)
+// ================= VERCEL-ROBUST REQUEST NORMALIZER =================
+// Automatically detects and restores original client request paths on Vercel.
 app.use((req, res, next) => {
   const originalUrl = req.url || "";
   
-  const xMatchedPath = (req.headers["x-matched-path"] as string) || "";
+  const xVercelForwardedPath = (req.headers["x-vercel-forwarded-path"] as string) || "";
   const xOriginalUrl = (req.headers["x-original-url"] as string) || "";
   const xForwardedUri = (req.headers["x-forwarded-uri"] as string) || "";
+  const xMatchedPath = (req.headers["x-matched-path"] as string) || "";
 
   // Check if req.url is already a valid direct API route (and not index.ts/js)
   const isDirectApi = req.url.startsWith("/api/") && !req.url.includes("index.ts") && !req.url.includes("index.js") && req.url !== "/api";
 
-  // On Vercel, we must extract and restore the original client request path from headers ONLY if it is not already a direct API path
   if (process.env.VERCEL && !isDirectApi) {
-    if (xOriginalUrl && xOriginalUrl.startsWith("/api")) {
+    if (xVercelForwardedPath && xVercelForwardedPath.startsWith("/api")) {
+      req.url = xVercelForwardedPath;
+    } else if (xOriginalUrl && xOriginalUrl.startsWith("/api")) {
       req.url = xOriginalUrl;
     } else if (xForwardedUri && xForwardedUri.startsWith("/api")) {
       req.url = xForwardedUri;
@@ -80,14 +92,19 @@ app.use((req, res, next) => {
     }
   }
 
-  // If the url points to the index file itself, strip it
+  // If the url still points to index.ts/js, strip it to extract the subpath correctly
   if (req.url.includes("/api/index.ts") || req.url.includes("/api/index.js")) {
     req.url = req.url.replace(/\/api\/index\.(ts|js)/i, "");
   }
 
-  // Ensure url has no duplicate slashes and correctly starts with /api if it's an API route
+  // Clean duplicate slashes and ensure it starts with /api if it is an API route
   req.url = req.url.replace(/\/+/g, "/");
-  const isApiRoute = req.url.startsWith("/api") || req.url.includes("/api/") || xOriginalUrl.startsWith("/api") || xMatchedPath.startsWith("/api") || xForwardedUri.startsWith("/api");
+  const isApiRoute = req.url.startsWith("/api") || 
+                    req.url.includes("/api/") || 
+                    xVercelForwardedPath.startsWith("/api") ||
+                    xOriginalUrl.startsWith("/api") || 
+                    xMatchedPath.startsWith("/api") || 
+                    xForwardedUri.startsWith("/api");
   
   if (isApiRoute && !req.url.startsWith("/api")) {
     req.url = "/api" + (req.url.startsWith("/") ? req.url : "/" + req.url);
@@ -95,8 +112,7 @@ app.use((req, res, next) => {
   
   req.url = req.url.replace(/\/+/g, "/");
 
-  console.log(`[Request] Method: ${req.method} | URL: ${req.url} | originalUrl: ${originalUrl} | x-original: ${xOriginalUrl} | x-matched: ${xMatchedPath}`);
-  
+  console.log(`[Request Log] Method: ${req.method} | Final URL: ${req.url} | Original: ${originalUrl} | x-vercel-path: ${xVercelForwardedPath}`);
   next();
 });
 
