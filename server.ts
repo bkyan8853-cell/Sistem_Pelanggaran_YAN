@@ -34,6 +34,13 @@ app.use((req, res, next) => {
 // Middleware to normalize and log requests (especially on Vercel)
 app.use((req, res, next) => {
   const originalUrl = req.url || "";
+  
+  // If the request URL already starts with /api, leave it as is and proceed
+  if (req.url && (req.url.startsWith("/api") || req.url.startsWith("/api/"))) {
+    console.log(`[Request] Method: ${req.method} | URL: ${req.url} (unmodified)`);
+    return next();
+  }
+
   const xMatchedPath = (req.headers["x-matched-path"] as string) || "";
   const xOriginalUrl = (req.headers["x-original-url"] as string) || "";
   const xForwardedUri = (req.headers["x-forwarded-uri"] as string) || "";
@@ -43,7 +50,7 @@ app.use((req, res, next) => {
 
   if (process.env.VERCEL || isApiRequest) {
     // Restore the original client request path if we are on Vercel
-    if (xMatchedPath && xMatchedPath.startsWith("/api")) {
+    if (xMatchedPath && xMatchedPath.startsWith("/api") && !xMatchedPath.includes("index")) {
       req.url = xMatchedPath;
     } else if (xOriginalUrl && xOriginalUrl.startsWith("/api")) {
       req.url = xOriginalUrl;
@@ -53,7 +60,7 @@ app.use((req, res, next) => {
     
     // If the url is pointing to the handler file itself, clean it up
     if (req.url.includes("/api/index.ts") || req.url.includes("/api/index.js")) {
-      req.url = req.url.replace(/^\/api\/index\.(ts|js)/i, "");
+      req.url = req.url.replace(/\/api\/index\.(ts|js)/i, "");
     }
     
     // Ensure the url starts with /api
